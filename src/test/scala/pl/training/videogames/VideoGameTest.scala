@@ -1,7 +1,8 @@
-package pl.training
+package pl.training.videogames
 
-import io.gatling.core.scenario.Simulation
 import io.gatling.core.Predef._
+import io.gatling.core.feeder.BatchableFeederBuilder
+import io.gatling.core.scenario.Simulation
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.Predef._
 import io.gatling.http.protocol.HttpProtocolBuilder
@@ -10,10 +11,10 @@ import scala.concurrent.duration.DurationInt
 
 class VideoGameTest extends Simulation {
 
-  val csvFeeder = csv("data/games.csv").circular
+  val csvFeeder: BatchableFeederBuilder[String] = csv("data/games.csv").circular
 
-  val ids = (1 to 10).iterator
-  val customFeeder = Iterator.continually(Map("gameId" -> ids.next()))
+  val ids: Iterator[Int] = (1 to 10).iterator
+  val customFeeder: Iterator[Map[String, Int]] = Iterator.continually(Map("gameId" -> ids.next()))
 
   val iterateOverGames: ChainBuilder = {
     repeat(10) {
@@ -24,7 +25,7 @@ class VideoGameTest extends Simulation {
     }
   }
 
-  def getAllVideoGames: ChainBuilder = {
+  val getAllVideoGames: ChainBuilder = {
     exec(http("Get all video games")
       .get("/videogame")
       .check(status.is(200))
@@ -80,12 +81,16 @@ class VideoGameTest extends Simulation {
     .exec(authenticate)
     .exec(createVideoGame)
 
-  def USER_COUNT: Int = System.getProperty("user.count", "1").toInt
-  def RAMP_DURATION: Int = System.getProperty("ramp.duration", "5").toInt
+  val USER_COUNT: Int = System.getProperty("user.count", "1").toInt
+  val RAMP_DURATION: Int = System.getProperty("ramp.duration", "5").toInt
 
   before {
     println("Before scenario")
   }
+
+  after(
+    println("After scenario")
+  )
 
   // setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
 

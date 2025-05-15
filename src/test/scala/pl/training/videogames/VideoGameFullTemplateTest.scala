@@ -1,4 +1,4 @@
-package pl.training
+package pl.training.videogames
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
