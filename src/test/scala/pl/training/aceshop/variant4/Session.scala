@@ -4,11 +4,9 @@ import io.gatling.core.Predef._
 import io.gatling.core.structure.ChainBuilder
 import io.gatling.http.Predef._
 
-
 object Session {
 
   val initSession: ChainBuilder = exec(flushCookieJar)
-    .exec(_.set("pageNumber", 1))
     .exec(_.set("isAuthenticated", false))
     .exec(_.set("itemsInCart", 0))
     .exec(_.set("cartTotalBalance", 0.0))

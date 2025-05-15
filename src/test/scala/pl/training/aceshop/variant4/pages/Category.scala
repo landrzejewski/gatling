@@ -17,7 +17,11 @@ object Category {
   def productsPage(pageNumber: Int): ChainBuilder = exec(
     http(s"Load Page ${pageNumber}")
       .get(s"/category/all?page=${pageNumber}")
-      .check(css(".page-item.active").is(s"${pageNumber}"))
+  )
+
+  val productsPage: ChainBuilder = exec(
+    http("Load Page #{currentPage}")
+      .get("/category/all?page=#{currentPage}")
   )
 
   def productsByCategory(categoryName: String): ChainBuilder = exec(
@@ -31,5 +35,23 @@ object Category {
       .get("/category/#{categorySlug}")
       .check(css("#CategoryName").is("#{categoryName}"))
     )
+
+  val iterateOverPages: ChainBuilder = exec { session =>
+    val currentPage = 0
+    val totalPages = session("categoryPages").as[Int]
+    session
+      .set("currentPage", currentPage)
+      .set("hasMorePages", currentPage < totalPages)
+  }
+    .asLongAs(session => session("hasMorePages").as[Boolean]) {
+      exec(Category.productsPage)
+        .exec { session =>
+          val currentPage = session("currentPage").as[Int] + 1
+          val totalPages = session("categoryPages").as[Int]
+          session
+            .set("currentPage", currentPage)
+            .set("hasMorePages", currentPage < totalPages)
+        }
+    }
 
 }
