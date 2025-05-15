@@ -10,6 +10,20 @@ import scala.concurrent.duration.DurationInt
 
 class VideoGameTest extends Simulation {
 
+  val csvFeeder = csv("data/games.csv").circular
+
+  val ids = (1 to 10).iterator
+  val customFeeder = Iterator.continually(Map("gameId" -> ids.next()))
+
+  val iterateOverGames: ChainBuilder = {
+    repeat(10) {
+      feed(csvFeeder).exec(http("Get game: #{gameName}")
+        .get("/videogame/#{gameId}")
+        .check(status.in(200 to 299))
+      ).pause(1)
+    }
+  }
+
   def getAllVideoGames: ChainBuilder = {
     exec(http("Get all video games")
       .get("/videogame")
@@ -57,15 +71,29 @@ class VideoGameTest extends Simulation {
     .exec { session => println(session("residentEvilGame").as[String]); session }
     .pause(1, 5)
     .repeat(4) {
-        exec(http("Get all video games")
+      exec(http("Get all video games")
         .get("/videogame")
         .check(status.not(404), status.not(500))
       )
-      .pause(3_000.milliseconds)
+        .pause(3_000.milliseconds)
     }
     .exec(authenticate)
     .exec(createVideoGame)
 
-  setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
+  def USER_COUNT: Int = System.getProperty("user.count", "1").toInt
+  def RAMP_DURATION: Int = System.getProperty("ramp.duration", "5").toInt
+
+  before {
+    println("Before scenario")
+  }
+
+  // setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
+
+  setUp(scn.inject(
+    nothingFor(3.seconds),
+    rampUsers(USER_COUNT).during(RAMP_DURATION)
+  )).protocols(httpProtocol)
 
 }
+
+// mvnw gatling:test -Dgatling.simulationClass=pl.training.VideoGameTest -Duser.count=4
