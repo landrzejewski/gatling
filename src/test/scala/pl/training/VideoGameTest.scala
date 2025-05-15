@@ -56,11 +56,13 @@ class VideoGameTest extends Simulation {
     )
     .exec { session => println(session("residentEvilGame").as[String]); session }
     .pause(1, 5)
-    .exec(http("Get all video games")
-      .get("/videogame")
-      .check(status.not(404), status.not(500))
-    )
-    .pause(3_000.milliseconds)
+    .repeat(4) {
+        exec(http("Get all video games")
+        .get("/videogame")
+        .check(status.not(404), status.not(500))
+      )
+      .pause(3_000.milliseconds)
+    }
     .exec(authenticate)
     .exec(createVideoGame)
 
