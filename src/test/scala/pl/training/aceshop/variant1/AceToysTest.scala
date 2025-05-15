@@ -8,7 +8,7 @@ import io.gatling.http.protocol.HttpProtocolBuilder
 class AceToysTest extends Simulation {
 
   val httpProtocol: HttpProtocolBuilder = http
-    .baseUrl(s"https://acetoys.uk")
+    .baseUrl("https://acetoys.uk")
     .inferHtmlResources(
       AllowList(),
       DenyList(
