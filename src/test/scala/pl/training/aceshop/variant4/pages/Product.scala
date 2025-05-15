@@ -1,4 +1,4 @@
-package pl.training.aceshop.variant3.pages
+package pl.training.aceshop.variant4.pages
 
 import io.gatling.core.Predef._
 import io.gatling.core.structure.ChainBuilder

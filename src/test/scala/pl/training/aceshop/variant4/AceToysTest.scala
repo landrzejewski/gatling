@@ -1,10 +1,10 @@
-package pl.training.aceshop.variant3
+package pl.training.aceshop.variant4
 
 import io.gatling.core.Predef._
 import io.gatling.core.structure.ScenarioBuilder
 import io.gatling.http.Predef._
 import io.gatling.http.protocol.HttpProtocolBuilder
-import pl.training.aceshop.variant3.pages._
+import pl.training.aceshop.variant4.pages._
 
 class AceToysTest extends Simulation {
 
