@@ -7,6 +7,7 @@ Apps:
 https://videogamedb.uk/swagger-ui/index.html
 https://acetoys.uk
 https://ecomm.gatling.io
+https://demo.inertiajs.com
 
 Links:
 https://jsonpath.com
